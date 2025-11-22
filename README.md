@@ -34,12 +34,27 @@ Jinte Li: User storeis 6 and 7 from blueprint
 •	7. As a user, I want weather-based packing tips (e.g., umbrella for rain), so that I bring the right gear
 
 Ethan: User stories 5 from blueprint
+
 •	5. As a user, I want to save my itinerary, so that I can return to it later.
+
 • Work on data persistence
+
 Mattias: User stories 9 from blueprint:
+
 • 9. As a user, I want to reorder or delete stops easily, so that I can refine my plan.
 
 If there is any more staff we wanna do free for add
 
+Milestone:
+
+Choosing API and finished Blueprint(*)
+
+API validity check(*)
+
+API interface (*)
+
 Meeting schedule:
+
 Every Wednesday night 7pm to 8 pm and every Saturday from 10am to 2 pm(regular meeting time, if there is emergency issues or unsolved problem, time will be scheduled by that week)
+
+
