@@ -4,3 +4,4 @@ public interface HistoryOutputBoundary {
 
     void present(HistoryOutput output);
 }
+//

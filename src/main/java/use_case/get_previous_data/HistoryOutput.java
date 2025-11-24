@@ -11,7 +11,7 @@ public class HistoryOutput {
     public HistoryOutput(List<TravelRecord> records) {
         this.records = records;
     }
-
+//
     public List<TravelRecord> getRecords() {
         return records;
     }

@@ -4,10 +4,9 @@ import entity.TravelRecord;
 
 import java.util.List;
 
-/**
- * Simple gateway for loading travel history.
- */
 public interface HistoryRepo {
 
     List<TravelRecord> findByUser(String user);
+
+    void save(String user, TravelRecord record);
 }

@@ -1,5 +1,5 @@
 package use_case.get_previous_data;
-
+//
 public class HistoryInput {
 
     private final String user;
