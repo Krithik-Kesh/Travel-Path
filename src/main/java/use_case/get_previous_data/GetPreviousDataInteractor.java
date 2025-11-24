@@ -1,6 +1,6 @@
 package use_case.get_previous_data;
 
-import entity.TravelRecord;
+import entities.TravelRecord;
 import java.util.List;
 
 /**
