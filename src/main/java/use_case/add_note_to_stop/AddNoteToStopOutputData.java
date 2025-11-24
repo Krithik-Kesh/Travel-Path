@@ -1,5 +1,5 @@
 package use_case.add_note_to_stop;
-// add not for stop
+// add not for stop.
 public class AddNoteToStopOutputData {
     private final String itineraryId;
     private final String stopId;

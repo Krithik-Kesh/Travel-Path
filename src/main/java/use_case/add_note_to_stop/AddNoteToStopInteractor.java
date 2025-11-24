@@ -3,7 +3,7 @@ package use_case.add_note_to_stop;
 import entity.Itinerary;
 import entity.ItineraryStop;
 import use_case.ItineraryRepository;
-// Interactor
+// Interactor.
 public class AddNoteToStopInteractor implements AddNoteToStopInputBoundary{
     private final ItineraryRepository itineraryRepository;
     private final AddNoteToStopOutputBoundary presenter;

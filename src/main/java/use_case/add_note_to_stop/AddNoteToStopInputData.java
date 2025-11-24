@@ -1,5 +1,5 @@
 package use_case.add_note_to_stop;
-// inputbound
+// inputbound.
 public class AddNoteToStopInputData {
     private final String itineraryId;
     private final String stopId;

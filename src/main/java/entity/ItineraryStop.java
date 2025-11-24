@@ -1,5 +1,5 @@
 package entity;
-// 2
+// 1
 
 public class ItineraryStop {
     private final String id;
