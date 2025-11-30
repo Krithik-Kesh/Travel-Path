@@ -42,7 +42,7 @@ public class RouteDataAccess implements RouteDataAccessInterface {
 
         String encodedCoords = URLEncoder.encode(coords.toString(), StandardCharsets.UTF_8);
 
-        String url = "https://api.mapbox.com/directions/v5/mapbox/driving/"
+        String url = "https://api.mapbox.com/directions/v5/mapbox/walking/"
                 + encodedCoords
                 + "?access_token=" + directionsToken
                 + "&overview=false";
