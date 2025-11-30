@@ -23,13 +23,13 @@ public class SaveInteractor implements SaveInputBoundary {
     @Override
     public void execute(SaveInput input) {
         try {
-            // 1. GET DATA: Grab the list of stops you added in memory
+            // 1. GET DATA: GRAB THE LISTS OF STOPS IN THE MEMORY
             List<ItineraryStop> stops = routeData.getStops();
 
-            // 2. GET STATS: Recalculate distance to ensure it's accurate
+            // 2. GET STATS: RECALCUALTE DISTANCE
             RouteInfo stats = routeData.getRoute(stops);
 
-            // 3. CREATE TRAVEL RECORD: Convert raw stats into the Entity
+            // 3. CREATE TRAVEL RECORD: CONVERT THE RAW STRINGS INTO ENTITIES
             String origin = stops.isEmpty() ? "Unknown" : stops.get(0).getName();
             String dest = stops.isEmpty() ? "Unknown" : stops.get(stops.size() - 1).getName();
 
@@ -38,9 +38,9 @@ public class SaveInteractor implements SaveInputBoundary {
                     origin,
                     dest,
                     stats.getDurationMinutes() + " mins",
-                    "Current Weather: " + stats.getCurrent,
+                    "Current Weather: " + input.getWeatherSummary(),
                     "Total Distance: " + stats.getDistance() + " km",
-                    "Pack light (Placeholder)"
+                    "Clothing Tips: " + input.getClothingSuggestion()
             );
 
             // 4. CREATE ITINERARY: PACKAGE + Record + ID together
