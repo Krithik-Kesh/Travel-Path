@@ -1,20 +1,23 @@
 package interface_adapter.add_multiple_stops;
 
+import use_case.add_stop.AddStopInputBoundary;
+import use_case.add_stop.AddStopInputData;
+
 public class AddStopController {
-    // This is the Interface for your Interactor
+    // INTERFACE FOR INTERACTOR
     final AddStopInputBoundary addStopUseCaseInteractor;
 
-    // Constructor: "Dependency Injection"
+    // THE DEPENCANCY INJECTION
     public AddStopController(AddStopInputBoundary addStopUseCaseInteractor) {
         this.addStopUseCaseInteractor = addStopUseCaseInteractor;
     }
 
-    // The Action: The UI calls this method
+    // UI CALLS EXECUTE
     public void execute(String cityName) {
-        // Package the raw string into an InputData object
+        //PACKAGE RAW STRING
         AddStopInputData inputData = new AddStopInputData(cityName);
 
-        //Pass it to the Interactor
+        //PASS TO INTERACTOR
         addStopUseCaseInteractor.execute(inputData);
     }
 }
