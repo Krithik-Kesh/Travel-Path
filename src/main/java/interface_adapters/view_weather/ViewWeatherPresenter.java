@@ -20,8 +20,8 @@ public class ViewWeatherPresenter implements ViewWeatherOutputBound {
     @Override
     public void present(OutputData Data) {
         // From output data get the current weather and the forecast data for future
-        WeatherData current = Data.getCurrentWeather();
-        List<DailyWeather> forecast = Data.getForecast();
+        WeatherData current = Data.currentWeather();
+        List<DailyWeather> forecast = Data.forecast();
 
         //Put all the features of the weather into a String
         String currentText = String.format(
@@ -46,9 +46,9 @@ public class ViewWeatherPresenter implements ViewWeatherOutputBound {
         // Give the data to viewmodel
 
         viewModel.setErrorMessage("");
-        viewModel.setDestinationLabel(Data.getDestinationLabel());
+        viewModel.setDestinationLabel(Data.destinationLabel());
         viewModel.setCurrentText(currentText);
-        viewModel.setTipsText(Data.getClothingSuggestionText());
+        viewModel.setTipsText(Data.clothingSuggestionText());
         viewModel.setForecastText(forecastText);
     }
 
