@@ -344,3 +344,76 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
 
         return mainPanel;
     }
+
+    // --- HISTORY PANEL ---
+    private JPanel buildHistoryPanel() {
+        JPanel panel = new JPanel(new BorderLayout(10, 10));
+        panel.setBackground(BG_COLOR);
+        panel.setBorder(new EmptyBorder(20, 40, 20, 40));
+
+        JLabel title = new JLabel("Travel History", SwingConstants.CENTER);
+        title.setFont(TITLE_FONT);
+        panel.add(title, BorderLayout.NORTH);
+
+        historyList = new JList<>(historyModel);
+        historyList.setFont(NORMAL_FONT);
+        panel.add(new JScrollPane(historyList), BorderLayout.CENTER);
+
+        JButton backButton = createStyledButton("Back to Dashboard");
+        backButton.addActionListener(e -> cardLayout.show(cards, "main"));
+
+        JPanel btnPanel = new JPanel();
+        btnPanel.setBackground(BG_COLOR);
+        btnPanel.add(backButton);
+        panel.add(btnPanel, BorderLayout.SOUTH);
+
+        return panel;
+    }
+
+    // --- HELPER METHODS FOR STYLING ---
+
+    private JButton createStyledButton(String text) {
+        JButton btn = new JButton(text);
+        btn.setBackground(PRIMARY_COLOR);
+        btn.setForeground(Color.BLACK); // Metal L&F sometimes overrides white text
+        btn.setFont(new Font("SansSerif", Font.BOLD, 12));
+        btn.setFocusPainted(false);
+        return btn;
+    }
+
+    private JPanel createSectionPanel(String title) {
+        JPanel p = new JPanel();
+        p.setBackground(Color.WHITE);
+        p.setBorder(new CompoundBorder(
+                BorderFactory.createTitledBorder(
+                        BorderFactory.createLineBorder(Color.LIGHT_GRAY),
+                        title,
+                        TitledBorder.LEFT,
+                        TitledBorder.TOP,
+                        HEADER_FONT,
+                        PRIMARY_COLOR
+                ),
+                new EmptyBorder(10, 10, 10, 10)
+        ));
+        return p;
+    }
+
+    private JTextArea createInfoArea() {
+        JTextArea area = new JTextArea();
+        area.setEditable(false);
+        area.setFont(NORMAL_FONT);
+        area.setLineWrap(true);
+        area.setWrapStyleWord(true);
+        area.setBackground(new Color(250, 250, 250));
+        return area;
+    }
+
+    private JPanel wrapWithLabel(String title, JTextArea area) {
+        JPanel p = new JPanel(new BorderLayout(5, 5));
+        p.setOpaque(false);
+        JLabel lbl = new JLabel(title);
+        lbl.setFont(new Font("SansSerif", Font.BOLD, 11));
+        p.add(lbl, BorderLayout.NORTH);
+        p.add(new JScrollPane(area), BorderLayout.CENTER);
+        return p;
+    }
