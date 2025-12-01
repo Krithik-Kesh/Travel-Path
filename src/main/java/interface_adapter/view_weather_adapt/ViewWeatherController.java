@@ -1,4 +1,4 @@
-package interface_adapters.view_weather;
+package interface_adapter.view_weather_adapt;
 
 import use_case.view_weather.InputData;
 import use_case.view_weather.ViewWeatherInputBound;

@@ -1,5 +1,4 @@
 package interface_adapter.add_multiple_stops;
-
 import interface_adapter.IteneraryViewModel; //MATTIAS VIEW MODEL
 import use_case.add_stop.AddStopOutputBoundary;
 import use_case.add_stop.AddStopOutputData;

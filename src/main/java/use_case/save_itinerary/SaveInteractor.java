@@ -58,14 +58,13 @@ public class SaveInteractor implements SaveInputBoundary {
                     stats.getDurationMinutes() + " mins",
                     "Current Weather: " + input.getWeatherSummary(),
                     "Total Distance: " + stats.getDistance() + " km",
-                    "Clothing Tips: " + input.getClothingSuggestion(),
-            );
+                    "Clothing Tips: " + input.getClothingSuggestion());
 
             // 4. CREATE ITINERARY: PACKAGE + RECORD + ID TOGETHER
             String uniqueID = UUID.randomUUID().toString();
             Itinerary itinerary = new Itinerary(uniqueID, record, stops);
 
-            // 5. SET DATE (Now safe because object exists)
+            // 5. SET DATE
             itinerary.setStartDate(parsedDate);
             routeData.setStartDate(parsedDate);
 

@@ -1,13 +1,13 @@
 package interface_adapter.save_itinerary;
-import interface_adapter.ItineraryViewModel;
+import interface_adapter.IteneraryViewModel;
 import use_case.save_itinerary.SaveOutput;
 import use_case.save_itinerary.SaveOutputBoundary;
 
 public class SavePresenter implements SaveOutputBoundary {
 
-    private final ItineraryViewModel viewModel;
+    private final IteneraryViewModel viewModel;
 
-    public SavePresenter(ItineraryViewModel viewModel) {
+    public SavePresenter(IteneraryViewModel viewModel) {
         this.viewModel = viewModel;
     }
 

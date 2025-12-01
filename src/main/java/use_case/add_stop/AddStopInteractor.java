@@ -3,17 +3,20 @@ package use_case.add_stop;
 import GeolocationsAPIs.APICaller;
 import entity.ItineraryStop;
 import entity.RouteInfo;
+import entity.StopFactory;
 import interface_adapter.reorder_delete_stops.RouteDataAccessInterface; // OUR SHARED INTERFACE
-import java.io.IOException;
+
 
 public class AddStopInteractor implements AddStopInputBoundary {
     final RouteDataAccessInterface dataAccess;
     final AddStopOutputBoundary presenter;
+    private final StopFactory stopFactory;
 
     public AddStopInteractor(RouteDataAccessInterface dataAccess,
-                             AddStopOutputBoundary presenter) {
+                             AddStopOutputBoundary presenter, StopFactory stopFactory) {
         this.dataAccess = dataAccess;
         this.presenter = presenter;
+        this.stopFactory = stopFactory;
     }
 
     @Override
