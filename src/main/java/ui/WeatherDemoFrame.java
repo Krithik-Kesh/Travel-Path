@@ -132,6 +132,61 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
         cardLayout.show(cards, "login");
     }
 
+    // --- LOGIN PANEL --- UI
+    private JPanel buildLoginPanel() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBackground(BG_COLOR);
+
+        JPanel card = new JPanel(new GridBagLayout());
+        card.setBackground(Color.WHITE);
+        card.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(200, 200, 200), 1),
+                BorderFactory.createEmptyBorder(40, 60, 40, 60)
+        ));
+
+        GridBagConstraints c = new GridBagConstraints();
+        c.insets = new Insets(10, 10, 10, 10);
+        c.fill = GridBagConstraints.HORIZONTAL;
+
+        // Title
+        JLabel title = new JLabel("TravelPath Login");
+        title.setFont(TITLE_FONT);
+        title.setForeground(PRIMARY_COLOR);
+        title.setHorizontalAlignment(SwingConstants.CENTER);
+        c.gridx = 0; c.gridy = 0; c.gridwidth = 2;
+        card.add(title, c);
+
+        // Inputs
+        c.gridwidth = 1; c.gridy = 1;
+        card.add(new JLabel("Username:"), c);
+        usernameField = new JTextField(15);
+        c.gridx = 1;
+        card.add(usernameField, c);
+
+        c.gridx = 0; c.gridy = 2;
+        card.add(new JLabel("Password:"), c);
+        passwordField = new JPasswordField(15);
+        c.gridx = 1;
+        card.add(passwordField, c);
+
+        // Button
+        JButton loginButton = createStyledButton("Log In");
+        loginButton.addActionListener(e -> onLogin());
+        c.gridx = 0; c.gridy = 3; c.gridwidth = 2; c.fill = GridBagConstraints.NONE;
+        c.anchor = GridBagConstraints.CENTER;
+        card.add(loginButton, c);
+
+        // Error
+        loginErrorLabel = new JLabel(" ");
+        loginErrorLabel.setForeground(Color.RED);
+        loginErrorLabel.setFont(new Font("SansSerif", Font.PLAIN, 11));
+        c.gridy = 4;
+        card.add(loginErrorLabel, c);
+
+        panel.add(card);
+        return panel;
+    }
+
     // Main page
     private JLabel welcomeLabel;
     private JTextField originField;         // 出发地
