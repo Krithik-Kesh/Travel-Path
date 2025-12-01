@@ -87,6 +87,7 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
 
     private String currentUser = "";
     private String mainDestination = null;
+    private String currentStartDate = "";
 
     public WeatherDemoFrame(GeocodingService geocoding,
                             ViewWeatherController weatherControl,
@@ -587,16 +588,30 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         Object src = evt.getSource();
+
+        // 1. LISTEN FOR WEATHER UPDATES
         if (src == weatherViewModel) {
             String name = evt.getPropertyName();
             if ("forecastText".equals(name) || "errorMessage".equals(name)) {
                 handleWeatherModelChange();
             }
-        } else if (src == itineraryViewModel) {
-            handleItineraryModelChange();
+        }
+
+        // 2. LISTEN FOR ITINERARY UPDATES
+        else if (src == itineraryViewModel) {
+            // NOTE: Check if your ViewModel uses "itineraryState" or just "state"
+            if ("itineraryState".equals(evt.getPropertyName())) {
+                handleItineraryModelChange();
+            }
+            // Also update the list if "error" property changes, or any generic property
+            // This ensures the list updates even if the property name varies slightly
+            if (evt.getPropertyName() != null && evt.getPropertyName().contains("State")) {
+                handleItineraryModelChange();
+            }
         }
     }
 
+    // --- Updates the text areas for weather ---
     private void handleWeatherModelChange() {
         String destination = weatherViewModel.getDestination();
         String currentText = weatherViewModel.getCurrentText();
@@ -635,6 +650,7 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
             forecastArea.setText(forecastText != null ? forecastText : "");
         }
 
+        // Logic for history list
         String weatherSummary = currentText.replace('\n', ' ');
         String tipSummary = "";
         if (tipsText != null && !tipsText.isEmpty()) {
@@ -661,6 +677,7 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
         }
     }
 
+    // --- RESTORED METHOD: Updates the Stops List ---
     private void handleItineraryModelChange() {
         String err = itineraryViewModel.getError();
         if (err != null && !err.isEmpty()) errorLabel.setText(err);
