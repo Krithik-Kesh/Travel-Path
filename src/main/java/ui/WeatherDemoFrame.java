@@ -492,18 +492,18 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
         mainDestination = dest;
         currentWeatherArea.setText("");
 
-        // 新的一次查询，清空城市 -> 当前天气 的缓存
+        // New check, clear City, save current weather
         cityWeatherMap.clear();
 
         try {
-            // 1. geocode origin & destination
+            // geocode origin & destination
             GeocodingService.LatLon destCoords = geocodingService.geocode(dest);
             GeocodingService.LatLon originCoords = geocodingService.geocode(originCity);
 
-            // 2. 先显示 destination 的天气（应该是主城市）
+            // Display weather of the destination
             weatherController.viewWeather(destCoords.getLat(), destCoords.getLon(), dest);
 
-            // 3. 再显示所有 stops 的天气
+            // Display weather of the stops
             List<ItineraryStop> stops = itineraryViewModel.getStops();
             if (stops != null) {
                 for (ItineraryStop s : stops) {
@@ -515,7 +515,7 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
                 }
             }
 
-            // 4. 计算路线：Origin -> stops -> Destination
+            // Calculate route in this order: origin -> stops -> destination
             java.util.List<ItineraryStop> routeStops = new java.util.ArrayList<>();
 
             // origin
@@ -524,7 +524,7 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
                     originCoords.getLat(), originCoords.getLon(), ""
             ));
 
-            // 中间的 stops
+            // the stops
             if (stops != null && !stops.isEmpty()) {
                 routeStops.addAll(stops);
             }

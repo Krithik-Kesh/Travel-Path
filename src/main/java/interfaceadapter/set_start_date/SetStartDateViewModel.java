@@ -2,11 +2,8 @@ package interfaceadapter.set_start_date;
 
 import java.time.LocalDate;
 
-/**
- * ViewModel for the SetStartDate use case.
- * Stores the UI state that should be displayed to the user.
- */
 public class SetStartDateViewModel {
+    // Stores the UI strata which should be displayed to the user
 
     private LocalDate startDate;
     private String message;

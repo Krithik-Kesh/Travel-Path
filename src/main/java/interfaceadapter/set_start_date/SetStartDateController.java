@@ -13,11 +13,7 @@ public class SetStartDateController {
         this.interactor = interactor;
     }
 
-    /**
-     * Called by the UI when the user selects a start date.
-     *
-     * @param date the start date selected by the user
-     */
+ // Called by the UI when the user selects a start date.
     public void setStartDate(LocalDate date) {
         SetStartDateInputData inputData = new SetStartDateInputData(date);
         interactor.execute(inputData);

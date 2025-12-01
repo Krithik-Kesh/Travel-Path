@@ -2,10 +2,8 @@ package usecase.SetStartDate;
 
 import java.time.LocalDate;
 
-/**
- * Output data for the SetStartDate use case.
- * Immutable data passed from Interactor → Presenter.
- */
+// Output data for Use Case SetStartDate
+// Pass data from Interactor to the Presenter
 public class SetStartDateOutputData {
 
     private final String itineraryId;
