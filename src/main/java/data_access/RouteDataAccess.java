@@ -206,8 +206,14 @@ public class RouteDataAccess implements RouteDataAccessInterface {
         Request request = new Request.Builder().url(url).get().build();
 
         try (Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful()) throw new IOException("API Failed: " + response.code());
-            if (response.body() == null) throw new IOException("Empty Body");
+            if (!response.isSuccessful()) {
+                if (response.code() == 422) {
+                    return new RouteInfo(0.0, 0.0, "No route found");
+                }
+                throw new IOException("API Failed: " + response.code());
+            }
+                if (response.body() == null) throw new IOException("Empty Body");
+
 
             JSONObject json = new JSONObject(response.body().string());
             JSONArray routes = json.getJSONArray("routes");
