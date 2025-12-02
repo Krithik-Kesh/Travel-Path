@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.Collections;
 
 import GeolocationsAPIs.GeocodingService;
 import interfaceadapter.notes.AddNoteToStopController;
@@ -285,9 +286,29 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
         stopsPanel.add(addStopSubPanel, BorderLayout.NORTH);
         stopsPanel.add(new JScrollPane(stopList), BorderLayout.CENTER);
 
+        JButton moveUpButton = new JButton("Move Up");
+        moveUpButton.addActionListener(e -> onMoveStop(-1));
+
+        JButton moveDownButton = new JButton("Move Down");
+        moveDownButton.addActionListener(e -> onMoveStop(1));
+
         JButton removeStopButton = new JButton("Remove Selected Stop");
         removeStopButton.addActionListener(e -> onRemoveSelected());
-        stopsPanel.add(removeStopButton, BorderLayout.SOUTH);
+
+        JPanel stopButtonsPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        stopButtonsPanel.setOpaque(false);
+        stopButtonsPanel.add(moveUpButton);
+        stopButtonsPanel.add(moveDownButton);
+        stopButtonsPanel.add(removeStopButton);
+
+        stopsPanel.add(stopButtonsPanel, BorderLayout.SOUTH);
+
+        stopButtonsPanel.setOpaque(false);
+        stopButtonsPanel.add(moveUpButton);
+        stopButtonsPanel.add(moveDownButton);
+        stopButtonsPanel.add(removeStopButton);
+
+        stopsPanel.add(stopButtonsPanel, BorderLayout.SOUTH);
 
         // C. Notes Panel
         JPanel notePanel = createSectionPanel("Notes");
@@ -513,6 +534,57 @@ public class WeatherDemoFrame extends JFrame implements PropertyChangeListener {
 
         errorLabel.setText("Removed stop: " + toRemove.getName());
     }
+
+    private void onMoveStop(int direction) {
+        int index = stopList.getSelectedIndex();
+        if (index < 0) {
+            errorLabel.setText("Please select a stop to move.");
+            return;
+        }
+
+        List<ItineraryStop> currentStops = itineraryViewModel.getStops();
+        if (currentStops == null || currentStops.isEmpty()) {
+            errorLabel.setText("No stops to move.");
+            return;
+        }
+
+        int newIndex = index + direction;
+        if (newIndex < 0 || newIndex >= currentStops.size()) {
+            return;
+        }
+
+        java.util.List<ItineraryStop> newStops = new java.util.ArrayList<>(currentStops);
+        Collections.swap(newStops, index, newIndex);
+        itineraryViewModel.setStops(newStops);
+        itineraryViewModel.setError("");
+
+        try {
+            List<ItineraryStop> backendStops = routeDataAccess.getStops();
+            if (backendStops != null) {
+                backendStops.clear();
+                backendStops.addAll(newStops);
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to sync RouteDataAccess: " + e.getMessage());
+        }
+
+        try {
+            Itinerary itinerary = itineraryRepository.findById(itineraryId);
+            if (itinerary == null) {
+                itinerary = new Itinerary(itineraryId, null, newStops);
+            } else {
+                itinerary.getStops().clear();
+                itinerary.getStops().addAll(newStops);
+            }
+            itineraryRepository.save(itinerary);
+        } catch (Exception e) {
+            System.err.println("Failed to update itinerary: " + e.getMessage());
+        }
+
+        stopList.setSelectedIndex(newIndex);
+        errorLabel.setText("Moved stop to position " + (newIndex + 1));
+    }
+
 
 
     private void onStopSelected() {
