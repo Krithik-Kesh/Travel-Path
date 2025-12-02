@@ -39,7 +39,7 @@ TravelPath is a desktop application designed to streamline the travel planning p
 Planning multi-city trips usually requires switching between several different tools. TravelPath solves this by integrating routing, weather data, and note-taking into a single clean interface.
 
 **Objective:**
-Build a Clean Architecture–compliant Java application that aggregates navigation, weather, and planning data into a unified Travel Record.
+Build a compliant Java application that aggregates navigation, weather, and planning data into a unified Travel Record—incorporated with CLEAN Architecture Principles.
 
 ---
 
