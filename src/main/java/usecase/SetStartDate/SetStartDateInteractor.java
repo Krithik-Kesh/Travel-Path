@@ -4,18 +4,17 @@ import entity.Itinerary;
 import usecase.ItineraryRepository;
 import java.time.LocalDate;
 
-/**
- * Interactor for the SetStartDate use case.
- */
-public class SetStartDateInteractor implements SetStartDateInputBoundary {
 
-    private final ItineraryRepository itineraryRepo;
+public class SetStartDateInteractor implements SetStartDateInputBoundary {
+    // Interactor
+
+    private final ItineraryRepository itineraryRepo; //
     private final SetStartDateOutputBoundary presenter;
 
     public SetStartDateInteractor(ItineraryRepository itineraryRepo,
                                   SetStartDateOutputBoundary presenter) {
         this.itineraryRepo = itineraryRepo;
-        this.presenter = presenter;
+        this.presenter = presenter; // Defines dependency on the Presenter
     }
 
     @Override
@@ -24,24 +23,20 @@ public class SetStartDateInteractor implements SetStartDateInputBoundary {
         String itineraryId = inputData.getItineraryId();
         LocalDate startDate = inputData.getStartDate();
 
-        // Step 1: Load itinerary
-        Itinerary itinerary = itineraryRepo.findById(itineraryId);
+        Itinerary itinerary = itineraryRepo.findById(itineraryId); // Load itinerary
 
-        if (itinerary == null) {
+        if (itinerary == null) { // Itinerary empty, false case, show error message
             presenter.prepareFailView(
-                    "Itinerary with ID '" + itineraryId + "' was not found."
+                    "There is no itinerary" + itineraryId
             );
             return;
         }
 
-        // Step 2: Update entity
-        itinerary.setStartDate(startDate);
+        itinerary.setStartDate(startDate); // Update entity
 
-        // Step 3: Save updated itinerary
-        itineraryRepo.save(itinerary);
+        itineraryRepo.save(itinerary); // Save updated itinerary
 
-        // Step 4: Prepare output data
-        SetStartDateOutputData outputData =
+        SetStartDateOutputData outputData = // Prepare output data
                 new SetStartDateOutputData(itineraryId, startDate);
 
         presenter.prepareSuccessView(outputData);
