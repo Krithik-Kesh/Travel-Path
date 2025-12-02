@@ -40,3 +40,11 @@ build/
 ### API KEYS ###
 .env
 src/.env
+
+
+itineraries.json
+travel_history.json
+
+backup
+
+node_modules
