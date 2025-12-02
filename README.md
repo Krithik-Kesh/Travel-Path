@@ -134,13 +134,11 @@ DIRECTIONS_TOKEN=your_mapbox_token_here
 
 ### Login Screen
 
-Screenshot placeholder:
 <img width="2002" height="1394" alt="image" src="https://github.com/user-attachments/assets/56ca465f-9547-4a9a-b2ef-3dc1dd24569e" />
 
 
 ### Main Planning Dashboard
 
-Screenshot placeholder:
 <img width="1998" height="1392" alt="image" src="https://github.com/user-attachments/assets/7660247c-14bb-42fa-88b1-3754a87c026f" />
 
 ---
