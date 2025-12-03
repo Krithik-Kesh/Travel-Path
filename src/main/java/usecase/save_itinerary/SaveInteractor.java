@@ -23,6 +23,12 @@ public class SaveInteractor implements SaveInputBoundary {
         this.presenter = (SaveOutputBoundary) presenter;
     }
 
+    public SaveInteractor(RouteDataAccessInterface routeData,
+                          SaveOutputBoundary presenter) {
+        this.routeData = routeData;
+        this.presenter = presenter;
+    }
+
     @Override
     public void execute(SaveInput input) {
 
