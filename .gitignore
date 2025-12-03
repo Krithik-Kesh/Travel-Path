@@ -41,6 +41,10 @@ build/
 .env
 src/.env
 
-### Local Persistence Files ###
+
 itineraries.json
 travel_history.json
+
+backup
+
+node_modules
