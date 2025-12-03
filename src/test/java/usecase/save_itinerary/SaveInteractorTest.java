@@ -1,15 +1,12 @@
 package usecase.save_itinerary;
 
-import data_access.RouteDataAccess;
 import entity.Itinerary;
 import entity.ItineraryStop;
 import entity.RouteInfo;
-import interfaceadapter.IteneraryViewModel;
-import interfaceadapter.save_itinerary.SavePresenter;
-
+import entity.TravelRecord;
+import interfaceadapter.reorder_delete_stops.RouteDataAccessInterface;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,153 +15,217 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class SaveInteractorTest {
 
-    // Fake ViewModel
-    private static class FakeViewModel extends IteneraryViewModel {
-        private String error = "";
-        @Override public void setError(String e) { this.error = e; }
-        @Override public String getError() { return error; }
-        @Override public void firePropertyChanged() {}
-    }
+    /**
+     * Simple in-memory implementation of RouteDataAccessInterface for testing.
+     */
+    private static class TestRouteDataAccess implements RouteDataAccessInterface {
+        final List<ItineraryStop> stops = new ArrayList<>();
+        Itinerary savedItinerary;
+        final boolean throwOnGetRoute;
+        LocalDate startDate;
 
-    // Test Presenter extends SavePresenter
-    private static class TestPresenter extends SavePresenter {
-
-        boolean successCalled = false;
-        boolean failCalled = false;
-
-        SaveOutput lastSuccess;
-        String lastError;
-
-        public TestPresenter() {
-            super(new FakeViewModel());   // satisfy real constructor
+        TestRouteDataAccess(boolean throwOnGetRoute) {
+            this.throwOnGetRoute = throwOnGetRoute;
+            stops.add(new ItineraryStop("1", "Origin", 1.0, 2.0, ""));
+            stops.add(new ItineraryStop("2", "Destination", 3.0, 4.0, ""));
         }
 
         @Override
+        public void addStop(ItineraryStop stop) {
+            stops.add(stop);
+        }
+
+        @Override
+        public List<ItineraryStop> getStops() {
+            return stops;
+        }
+
+        @Override
+        public RouteInfo getRoute(List<ItineraryStop> ignored) {
+            if (throwOnGetRoute) {
+                throw new RuntimeException("boom");
+            }
+            return new RouteInfo(10.0, 30.0, "Total: 10.0 km, 30 min");
+        }
+
+        @Override
+        public void saveItinerary(Itinerary itinerary) {
+            this.savedItinerary = itinerary;
+        }
+
+        @Override
+        public List<Itinerary> loadItineraries() {
+            return new ArrayList<>();
+        }
+
+        @Override
+        public void setStartDate(LocalDate date) {
+            this.startDate = date;
+        }
+
+        @Override
+        public LocalDate getStartDate() {
+            return startDate;
+        }
+    }
+
+    /**
+     * Test presenter that records both success and failure calls.
+     */
+    private static class TestPresenter implements SaveOutputBoundary {
+        SaveOutput lastOutput = null;
+        String lastErrorMessage = null;
+
+        @Override
         public void present(SaveOutput output) {
-            successCalled = true;
-            lastSuccess = output;
+            this.lastOutput = output;
         }
 
         @Override
         public void prepareFailView(String error) {
-            failCalled = true;
-            lastError = error;
+            this.lastErrorMessage = error;
         }
     }
 
-    // SUCCESS DAO
-    private static class TestRouteDataAccessSuccess extends RouteDataAccess {
-
-        List<ItineraryStop> stops = new ArrayList<>();
-        List<Itinerary> saved = new ArrayList<>();
-        RouteInfo routeInfo;
-        LocalDate startDate;
-
-        TestRouteDataAccessSuccess(RouteInfo info) {
-            this.routeInfo = info;
-        }
-
-        @Override public void addStop(ItineraryStop stop) { stops.add(stop); }
-        @Override public List<ItineraryStop> getStops() { return new ArrayList<>(stops); }
-        @Override public RouteInfo getRoute(List<ItineraryStop> s) { return routeInfo; }
-        @Override public void saveItinerary(Itinerary it) { saved.add(it); }
-        @Override public List<Itinerary> loadItineraries() { return new ArrayList<>(saved); }
-        @Override public void setStartDate(LocalDate date) { this.startDate = date; }
-        @Override public LocalDate getStartDate() { return startDate; }
-    }
-
-    // FAILURE DAO
-    private static class TestRouteDataAccessFailure extends RouteDataAccess {
-
-        List<ItineraryStop> stops = new ArrayList<>();
-        List<Itinerary> saved = new ArrayList<>();
-
-        @Override public List<ItineraryStop> getStops() { return new ArrayList<>(stops); }
-        @Override public RouteInfo getRoute(List<ItineraryStop> s) throws IOException {
-            throw new IOException("Simulated failure");
-        }
-        @Override public void addStop(ItineraryStop stop) { stops.add(stop); }
-        @Override public void saveItinerary(Itinerary it) { saved.add(it); }
-        @Override public List<Itinerary> loadItineraries() { return new ArrayList<>(saved); }
-    }
-
     @Test
-    void fail_nullDate() {
-        TestRouteDataAccessSuccess dao = new TestRouteDataAccessSuccess(null);
+    void execute_savesItineraryAndCallsPresenter() {
+        TestRouteDataAccess dao = new TestRouteDataAccess(false);
         TestPresenter presenter = new TestPresenter();
-
         SaveInteractor interactor = new SaveInteractor(dao, presenter);
-        SaveInput input = new SaveInput("roger", null, "Sunny", "Coat");
-
-        interactor.execute(input);
-
-        assertTrue(presenter.failCalled);
-        assertEquals("Please insert a start date.", presenter.lastError);
-        assertFalse(presenter.successCalled);
-    }
-
-    @Test
-    void fail_emptyDate() {
-        TestRouteDataAccessSuccess dao = new TestRouteDataAccessSuccess(null);
-        TestPresenter presenter = new TestPresenter();
-
-        SaveInteractor interactor = new SaveInteractor(dao, presenter);
-        SaveInput input = new SaveInput("roger", "", "Sunny", "Coat");
-
-        interactor.execute(input);
-
-        assertTrue(presenter.failCalled);
-        assertEquals("Please insert a start date.", presenter.lastError);
-    }
-
-    @Test
-    void fail_invalidDateFormat() {
-        TestRouteDataAccessSuccess dao = new TestRouteDataAccessSuccess(null);
-        TestPresenter presenter = new TestPresenter();
-
-        SaveInteractor interactor = new SaveInteractor(dao, presenter);
-        SaveInput input = new SaveInput("roger", "2024-99-99", "Sunny", "Coat");
-
-        interactor.execute(input);
-
-        // invalid date DOES NOT call presenter according to YOUR code
-        assertFalse(presenter.failCalled);
-        assertFalse(presenter.successCalled);
-    }
-
-    @Test
-    void success_savesCorrectly() {
-
-        RouteInfo info = new RouteInfo(550.0, 300.0, "Test Route");
-
-        TestRouteDataAccessSuccess dao =
-                new TestRouteDataAccessSuccess(info);
-
-        TestPresenter presenter = new TestPresenter();
-
-        SaveInteractor interactor = new SaveInteractor(dao, presenter);
-
-        dao.stops.add(new ItineraryStop("1", "Toronto", 43.0, -79.0, ""));
-        dao.stops.add(new ItineraryStop("2", "Montreal", 45.0, -73.0, ""));
 
         SaveInput input = new SaveInput(
-                "roger",
-                "2024-12-01",
+                "Alice",
                 "Sunny",
-                "Coat"
+                "T-shirt",
+                "2024-12-03"
         );
 
         interactor.execute(input);
 
-        assertTrue(presenter.successCalled);
-        assertFalse(presenter.failCalled);
+        assertNotNull(dao.savedItinerary);
+        assertEquals(LocalDate.parse("2024-12-03"), dao.startDate);
 
-        assertEquals(LocalDate.of(2024, 12, 1), dao.startDate);
-        assertEquals(1, dao.saved.size());
+        TravelRecord record = dao.savedItinerary.getRecord();
+        assertNotNull(record);
+        assertEquals("Alice", record.getUsername());
+        assertEquals("Origin", record.getOrigin());
+        assertEquals("Destination", record.getDestination());
+        assertEquals("Current Weather: Sunny", record.getWeatherSummary());
+        assertEquals("Total Distance: 10.0 km", record.getOptimalPath());
+        assertEquals("Clothing Tips: T-shirt", record.getClothingSuggestion());
 
-        Itinerary saved = dao.saved.get(0);
+        assertNotNull(presenter.lastOutput);
+        assertSame(record, presenter.lastOutput.getRecord());
+        assertNull(presenter.lastErrorMessage);
+    }
 
-        assertEquals("Toronto", saved.getRecord().getOrigin());
-        assertEquals("Montreal", saved.getRecord().getDestination());
+    @Test
+    void execute_handlesExceptionGracefully() {
+        TestRouteDataAccess dao = new TestRouteDataAccess(true);
+        TestPresenter presenter = new TestPresenter();
+        SaveInteractor interactor = new SaveInteractor(dao, presenter);
+
+        SaveInput input = new SaveInput(
+                "Bob",
+                "Cloudy",
+                "Jacket",
+                "2024-12-03"
+        );
+
+        assertDoesNotThrow(() -> interactor.execute(input));
+
+        assertNull(dao.savedItinerary);
+        assertNull(presenter.lastOutput);
+        assertNull(presenter.lastErrorMessage);
+    }
+
+    @Test
+    void execute_returnsFailWhenDateMissing() {
+        TestRouteDataAccess dao = new TestRouteDataAccess(false);
+        TestPresenter presenter = new TestPresenter();
+        SaveInteractor interactor = new SaveInteractor(dao, presenter);
+
+        SaveInput input = new SaveInput(
+                "Alice",
+                "Sunny",
+                "T-shirt",
+                ""
+        );
+
+        interactor.execute(input);
+
+        assertNull(dao.savedItinerary);
+        assertNull(presenter.lastOutput);
+        assertEquals("Please insert a start date.", presenter.lastErrorMessage);
+    }
+
+    @Test
+    void execute_returnsFailWhenNullDate() {
+        TestRouteDataAccess dao = new TestRouteDataAccess(false);
+        TestPresenter presenter = new TestPresenter();
+        SaveInteractor interactor = new SaveInteractor(dao, presenter);
+
+        SaveInput input = new SaveInput(
+                "NullUser",
+                "Sunny",
+                "T-shirt",
+                null
+        );
+
+        interactor.execute(input);
+
+        assertNull(dao.savedItinerary);
+        assertNull(presenter.lastOutput);
+        assertEquals("Please insert a start date.", presenter.lastErrorMessage);
+    }
+
+    @Test
+    void execute_returnsEarlyWhenDateFormatInvalid() {
+        TestRouteDataAccess dao = new TestRouteDataAccess(false);
+        TestPresenter presenter = new TestPresenter();
+        SaveInteractor interactor = new SaveInteractor(dao, presenter);
+
+        SaveInput input = new SaveInput(
+                "Alice",
+                "Sunny",
+                "T-shirt",
+                "2024/12/03"
+        );
+
+        interactor.execute(input);
+
+        assertNull(dao.savedItinerary);
+        assertNull(presenter.lastOutput);
+        assertNull(presenter.lastErrorMessage);
+    }
+
+    @Test
+    void execute_usesUnknownWhenNoStops() {
+        TestRouteDataAccess dao = new TestRouteDataAccess(false);
+        dao.stops.clear();
+
+        TestPresenter presenter = new TestPresenter();
+        SaveInteractor interactor = new SaveInteractor(dao, presenter);
+
+        SaveInput input = new SaveInput(
+                "Charlie",
+                "Rainy",
+                "Coat",
+                "2024-12-05"
+        );
+
+        interactor.execute(input);
+
+        assertNotNull(dao.savedItinerary);
+        TravelRecord record = dao.savedItinerary.getRecord();
+        assertEquals("Unknown", record.getOrigin());
+        assertEquals("Unknown", record.getDestination());
+    }
+
+    @Test
+    void constructor_withConcreteTypes_isCallable() {
+        SaveInteractor interactor =
+                new SaveInteractor(null, (interfaceadapter.save_itinerary.SavePresenter) null);
+        assertNotNull(interactor);
     }
 }
